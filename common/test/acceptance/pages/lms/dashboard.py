@@ -19,7 +19,7 @@ class DashboardPage(PageObject):
         """
         super(DashboardPage, self).__init__(browser)
 
-    url = "{base}/dashboard".format(base=BASE_URL)
+    url = "{base}/dashboard#courses/current".format(base=BASE_URL)
 
     def is_browser_on_page(self):
         return self.q(css='section.my-courses').present
