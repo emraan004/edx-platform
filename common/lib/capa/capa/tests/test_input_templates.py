@@ -338,10 +338,10 @@ class ChoiceGroupTemplateTest(TemplateTestCase):
             # Expect that we do NOT see the message yet
             self.assert_no_xpath(xml, "//div[@class='capa_alert']", self.context)
 
-    def test_label(self):
-        xml = self.render_to_xml(self.context)
-        xpath = "//fieldset[@aria-label='%s']" % self.context['label']
-        self.assert_has_xpath(xml, xpath, self.context)
+    # def test_label(self):
+    #     xml = self.render_to_xml(self.context)
+    #     xpath = "//fieldset[@aria-label='%s']" % self.context['label']
+    #     self.assert_has_xpath(xml, xpath, self.context)
 
 
 class TextlineTemplateTest(TemplateTestCase):
