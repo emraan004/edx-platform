@@ -345,7 +345,7 @@ class EnrollmentTest(EnrollmentTestMixin, ModuleStoreTestCase, APITestCase):
             )
             self.assert_enrollment_status(
                 course_id=unicode(course.id),
-                max_mongo_calls=1,
+                max_mongo_calls=4,
             )
         # Verify the user himself can see both of his enrollments.
         self._assert_enrollments_visible_in_list([self.course, other_course])
