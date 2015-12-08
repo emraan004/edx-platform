@@ -21,6 +21,7 @@ from xmodule_django.models import CourseKeyField, UsageKeyField
 
 from ccx_keys.locator import CCXLocator
 
+THUMBNAIL_DIMENSIONS = (375, 200)
 
 class CourseOverview(TimeStampedModel):
     """
@@ -35,7 +36,7 @@ class CourseOverview(TimeStampedModel):
         app_label = 'course_overviews'
 
     # IMPORTANT: Bump this whenever you modify this model and/or add a migration.
-    VERSION = 2
+    VERSION = 3
 
     # Cache entry versioning.
     version = IntegerField()
@@ -97,7 +98,7 @@ class CourseOverview(TimeStampedModel):
             CourseOverview: overview extracted from the given course
         """
         from lms.djangoapps.certificates.api import get_active_web_certificate
-        from openedx.core.lib.courses import course_image_url
+        from openedx.core.lib.courses import course_image_url, create_course_image_thumbnail
 
         # Workaround for a problem discovered in https://openedx.atlassian.net/browse/TNL-2806.
         # If the course has a malformed grading policy such that
@@ -121,6 +122,19 @@ class CourseOverview(TimeStampedModel):
             end = ccx.due
             max_student_enrollments_allowed = ccx.max_student_enrollments_allowed
 
+        # Try to create a thumbnail of the course image. If this fails for any
+        # reason (weird format, non-standard URL, etc.), just fall back to the
+        # old behavior of using the originally provided course_image_url().
+        try:
+            course_image_url_ = create_course_image_thumbnail(course, THUMBNAIL_DIMENSIONS)
+        except Exception:
+            logger.exception(
+                "Could not create thumbnail for course %s with image %s",
+                course.id,
+                course.course_image
+            )
+            course_image_url_ = course_image_url(course)
+
         return cls(
             version=cls.VERSION,
             id=course.id,
@@ -133,7 +147,7 @@ class CourseOverview(TimeStampedModel):
             end=end,
             advertised_start=course.advertised_start,
 
-            course_image_url=course_image_url(course),
+            course_image_url=course_image_url_,
             facebook_url=course.facebook_url,
             social_sharing_url=course.social_sharing_url,
 
