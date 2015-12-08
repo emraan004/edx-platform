@@ -36,6 +36,20 @@ def get_organization(organization_id):
     return organizations_api.get_organization(organization_id)
 
 
+def get_organization_by_short_name(organization_short_name):
+    """
+    Client API operation adapter/wrapper
+    """
+    if not settings.FEATURES.get('ORGANIZATIONS_APP', False):
+        return None
+    from organizations import api as organizations_api
+    from organizations.exceptions import InvalidOrganizationException
+    try:
+        return organizations_api.get_organization_by_short_name(organization_short_name)
+    except InvalidOrganizationException:
+        return None
+
+
 def get_organizations():
     """
     Client API operation adapter/wrapper
@@ -72,3 +86,10 @@ def get_course_organizations(course_id):
         return []
     from organizations import api as organizations_api
     return organizations_api.get_course_organizations(course_id)
+
+
+def organizations_enabled():
+    """
+    Returns boolean indication if organizations app is enabled on not.
+    """
+    return settings.FEATURES.get('ORGANIZATIONS_APP', False)
