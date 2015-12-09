@@ -34,9 +34,9 @@ class Command(BaseCommand):
             raise CommandError("Invalid course_key: '%s'. Proper syntax: 'org/number/run' " % options['course_key'])
 
         if not modulestore().get_course(course_key):
-            raise CommandError("Course with '%s' key not found." % args[0])
+            raise CommandError("Course with '%s' key not found." % options['course_key'])
 
-        print 'Going to delete the %s course from DB....' % args[0]
+        print 'Going to delete the %s course from DB....' % options['course_key']
         if query_yes_no("Deleting course {0}. Confirm?".format(course_key), default="no"):
             if query_yes_no("Are you sure. This action cannot be undone!", default="no"):
                 delete_course_and_groups(course_key, ModuleStoreEnum.UserID.mgmt_command)
