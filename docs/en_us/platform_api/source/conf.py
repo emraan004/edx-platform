@@ -192,8 +192,7 @@ MOCK_MODULES = [
     'rest_framework_oauth.authentication',
     'certificates.api',
     'courseware.date_summary',
-    'profile_images.images',
-    'profile_images.views'
+    'profile_images.images'
 ]
 
 for mod_name in MOCK_MODULES:
