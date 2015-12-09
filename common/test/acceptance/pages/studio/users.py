@@ -256,6 +256,7 @@ class UserWrapper(PageObject):
         self.q(css='.prompt .action-primary').click()
         self.wait_for_element_absence('.page-prompt .is-shown', 'Confirmation prompt is hidden')
         wait_for_ajax_or_reload(self.browser)
+        self.wait_for_element_absence('.ui-loading', 'Page is finished loading')
 
     @property
     def has_no_change_warning(self):
