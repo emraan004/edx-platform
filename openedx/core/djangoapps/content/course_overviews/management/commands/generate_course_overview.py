@@ -36,7 +36,7 @@ class Command(BaseCommand):
         if options['all']:
             # Have CourseOverview generate course overviews for all
             # the courses in the system.
-            CourseOverview.get_all_courses()
+            CourseOverview.get_all_courses(force_reseeding=True)
         else:
             course_keys = []
             if len(args) < 1:

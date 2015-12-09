@@ -445,11 +445,21 @@ class CourseOverview(TimeStampedModel):
         return course_overviews
 
     @classmethod
-    def get_all_courses(cls):
+    def get_all_courses(cls, force_reseeding=False):
         """
         Returns all CourseOverview objects in the database.
+
+        Arguments:
+            force_reseeding (bool): Optional parameter.
+                If True, the modulestore is used as the source of truth for
+                the list of courses, even if the CourseOverview table was
+                previously seeded.
+
+                If False, the list of courses is retrieved from the
+                CourseOverview table if it was previously seeded, falling
+                back to the modulestore if it wasn't seeded.
         """
-        if not CourseOverviewGeneratedHistory.objects.first():
+        if force_reseeding or not CourseOverviewGeneratedHistory.objects.first():
             # Seed the CourseOverview table with data for all
             # courses in the system.
             course_keys = [course.id for course in modulestore().get_courses()]
@@ -460,6 +470,7 @@ class CourseOverview(TimeStampedModel):
             # Note: If a newly created course is not returned in this QueryList,
             # make sure the "publish" signal was emitted when the course was
             # created.  For tests using CourseFactory, use emit_signals=True.
+            # Or pass True for force_reseeding.
             course_overviews = CourseOverview.objects.all()
 
         return course_overviews

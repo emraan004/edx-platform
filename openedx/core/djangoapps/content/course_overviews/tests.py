@@ -455,3 +455,12 @@ class CourseOverviewTestCase(ModuleStoreTestCase):
             {course_overview.id for course_overview in CourseOverview.get_all_courses()},
             set(course_ids),
         )
+
+        with mock.patch(
+            'openedx.core.djangoapps.content.course_overviews.models.CourseOverview.get_from_id'
+        ) as mock_get_from_id:
+            CourseOverview.get_all_courses()
+            self.assertFalse(mock_get_from_id.called)
+
+            CourseOverview.get_all_courses(force_reseeding=True)
+            self.assertTrue(mock_get_from_id.called)
