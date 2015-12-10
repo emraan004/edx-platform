@@ -21,7 +21,8 @@ def get_visible_courses():
     """
     Return the set of CourseDescriptors that should be visible in this branded instance
     """
-    courses = CourseOverview.get_all_courses()
+    filtered_by_org = microsite.get_value('course_org_filter')
+    courses = CourseOverview.get_all_courses(org=filtered_by_org)
     courses = sorted(courses, key=lambda course: course.number)
 
     # See if we have filtered course listings in this domain
@@ -34,7 +35,6 @@ def get_visible_courses():
             [SlashSeparatedCourseKey.from_deprecated_string(c) for c in settings.COURSE_LISTINGS[subdomain]]
         )
 
-    filtered_by_org = microsite.get_value('course_org_filter')
     if filtered_by_org:
         return [course for course in courses if course.location.org == filtered_by_org]
     if filtered_visible_ids:
