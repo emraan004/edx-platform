@@ -228,13 +228,13 @@ def may_certify_for_course(certificates_display_behavior, certificates_show_befo
 def sorting_score(start, advertised_start, announcement):
     """
     Returns a tuple that can be used to sort the courses according
-    the how "new" they are. The "newness" score is computed using a
+    to how "new" they are. The "newness" score is computed using a
     heuristic that takes into account the announcement and
     (advertised) start dates of the course if available.
 
     The lower the number the "newer" the course.
     """
-    # Make courses that have an announcement date shave a lower
+    # Make courses that have an announcement date have a lower
     # score than courses than don't, older courses should have a
     # higher score.
     announcement, start, now = sorting_dates(start, advertised_start, announcement)
@@ -253,10 +253,6 @@ def sorting_dates(start, advertised_start, announcement):
     Utility function to get datetime objects for dates used to
     compute the is_new flag and the sorting_score.
     """
-    announcement = announcement
-    if announcement is not None:
-        announcement = announcement
-
     try:
         start = dateutil.parser.parse(advertised_start)
         if start.tzinfo is None:
