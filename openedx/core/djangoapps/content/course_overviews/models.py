@@ -51,6 +51,7 @@ class CourseOverview(TimeStampedModel):
     # Course identification
     id = CourseKeyField(db_index=True, primary_key=True, max_length=255)
     _location = UsageKeyField(max_length=255)
+    org = TextField(max_length=255, default='outdated_entry')
     display_name = TextField(null=True)
     display_number_with_default = TextField()
     display_org_with_default = TextField()
@@ -142,6 +143,7 @@ class CourseOverview(TimeStampedModel):
             version=cls.VERSION,
             id=course.id,
             _location=course.location,
+            org=course.location.org,
             display_name=display_name,
             display_number_with_default=course.display_number_with_default,
             display_org_with_default=course.display_org_with_default,
@@ -445,7 +447,7 @@ class CourseOverview(TimeStampedModel):
         return course_overviews
 
     @classmethod
-    def get_all_courses(cls, force_reseeding=False):
+    def get_all_courses(cls, force_reseeding=False, org=None):
         """
         Returns all CourseOverview objects in the database.
 
@@ -458,6 +460,9 @@ class CourseOverview(TimeStampedModel):
                 If False, the list of courses is retrieved from the
                 CourseOverview table if it was previously seeded, falling
                 back to the modulestore if it wasn't seeded.
+
+            org (string): Optional parameter that allows filtering
+                by organization.
         """
         if force_reseeding or not CourseOverviewGeneratedHistory.objects.first():
             # Seed the CourseOverview table with data for all
@@ -466,6 +471,8 @@ class CourseOverview(TimeStampedModel):
             course_overviews = cls.get_select_courses(course_keys)
             num_courses = len(course_overviews)
             CourseOverviewGeneratedHistory.objects.create(num_courses=num_courses)
+            if org:
+                course_overviews = [c for c in course_overviews if c.org == org]
 
         else:
             # Note: If a newly created course is not returned in this QueryList,
@@ -473,6 +480,8 @@ class CourseOverview(TimeStampedModel):
             # created.  For tests using CourseFactory, use emit_signals=True.
             # Or pass True for force_reseeding.
             course_overviews = CourseOverview.objects.all()
+            if org:
+                course_overviews = course_overviews.filter(org=org)
 
         return course_overviews
 
