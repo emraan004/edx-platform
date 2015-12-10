@@ -485,5 +485,5 @@ class CourseOverviewTestCase(ModuleStoreTestCase):
 
         self.assertSetEqual(
             {c.id for c in CourseOverview.get_all_courses()},
-            {c.id for c in (org_courses[0] + org_courses[1])},
+            {c.id for c in org_courses[0] + org_courses[1]},
         )
