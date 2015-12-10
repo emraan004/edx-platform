@@ -317,10 +317,15 @@ class SharedModuleStoreTestCase(TestCase):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
             """Call the object method, and reset the test case afterwards."""
-            return_val = f(*args, **kwargs)
-            obj = args[0]
-            obj.reset()
-            return return_val
+            try:
+                return_val = f(*args, **kwargs)
+            except:
+                raise
+            else:
+                return return_val
+            finally:
+                obj = args[0]
+                obj.reset()
 
         return wrapper
 
