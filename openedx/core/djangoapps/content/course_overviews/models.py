@@ -383,7 +383,7 @@ class CourseOverview(TimeStampedModel):
         """
         Returns the type of the course's 'start' field.
         """
-        if self.advertised_start is not None:
+        if self.advertised_start:
             return u'string'
         elif self.start != DEFAULT_START_DATE:
             return u'timestamp'
@@ -395,7 +395,7 @@ class CourseOverview(TimeStampedModel):
         """
         Returns the display value for the course's start date.
         """
-        if self.advertised_start is not None:
+        if self.advertised_start:
             return self.advertised_start
         elif self.start != DEFAULT_START_DATE:
             return defaultfilters.date(self.start, "DATE_FORMAT")
