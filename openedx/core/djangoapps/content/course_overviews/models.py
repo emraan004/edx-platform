@@ -464,7 +464,8 @@ class CourseOverview(TimeStampedModel):
             # courses in the system.
             course_keys = [course.id for course in modulestore().get_courses()]
             course_overviews = cls.get_select_courses(course_keys)
-            CourseOverviewGeneratedHistory.objects.create(num_courses=len(course_overviews))
+            num_courses = len(course_overviews)
+            CourseOverviewGeneratedHistory.objects.create(num_courses=num_courses)
 
         else:
             # Note: If a newly created course is not returned in this QueryList,
